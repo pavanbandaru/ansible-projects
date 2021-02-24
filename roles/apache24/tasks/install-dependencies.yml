@@ -1,0 +1,4 @@
+---
+- name: Install all the packages
+  yum:
+    name: ['python3', 'make', 'expat-devel', 'pcre', 'pcre-devel', 'openssl-devel', 'autoconf', 'libtool']

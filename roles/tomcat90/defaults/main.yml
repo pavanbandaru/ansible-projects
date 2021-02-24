@@ -1,0 +1,9 @@
+---
+tomcat_owner: osboxes
+tomcat_group: osboxes
+tomcat_jdk_version: jdk1.8.0_281
+tomcat_jdk_download_version: jdk-8u281-linux-x64.tar.gz
+tomcat_version: apache-tomcat-9.0.41
+tomcat_release: tomcat90
+tomcat_instance: poc-tomcat-instance
+tomcat_url: https://downloads.apache.org/tomcat/tomcat-9/v9.0.41/bin/apache-tomcat-9.0.41.tar.gz

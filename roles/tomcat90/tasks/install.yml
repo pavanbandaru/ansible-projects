@@ -1,0 +1,93 @@
+---
+- name: Installing Java
+  unarchive:
+    src: "/tmp/jdk-8u281-linux-x64.tar.gz"
+    dest: "/home/osboxes/products/jdk/"
+    owner: "{{ tomcat_owner }}"
+    group: "{{ tomcat_group }}"
+    mode: "0755"
+
+- name: Create a symlink for jdk
+  file:
+    src: "/home/osboxes/products/jdk/{{ tomcat_jdk_version }}"
+    dest: /home/osboxes/products/jdk/jdk_latest
+    owner: "{{ tomcat_owner }}"
+    group: "{{ tomcat_group }}"
+    mode: "0755"
+    state: link
+
+
+- name: Copy bash_profile to destination server for setting up JAVA_HOME
+  copy:
+    src: "bash_profile"
+    dest: "/home/osboxes/.bash_profile"
+    owner: "{{ tomcat_owner }}"
+    group: "{{ tomcat_group }}"
+    mode: "0644"
+
+- name: Source the .bash_profile
+  shell: source /home/osboxes/.bash_profile
+
+- name: Download tomcat binaries
+  get_url:
+    url: "{{ tomcat_url }}"
+    dest: /tmp/
+    owner: "{{ tomcat_owner }}"
+    group: "{{ tomcat_group }}"
+    mode: "0755"
+
+- name: Install tomcat
+  unarchive:
+    src: "/tmp/{{ tomcat_version }}.tar.gz"
+    dest: "/home/osboxes/products/tomcat/"
+    owner: "{{ tomcat_owner }}"
+    group: "{{ tomcat_group }}"
+    mode: "0755"
+    remote_src: yes
+
+- name: Create a symlinks for tomcat products
+  file:
+    src: "/home/osboxes/products/tomcat/{{ tomcat_version }}"
+    dest: "/home/osboxes/products/tomcat/{{ tomcat_release }}"
+    owner: "{{ tomcat_owner }}"
+    group: "{{ tomcat_group }}"
+    mode: "0755"
+    state: link
+
+- name: Create a new tomcat instance 
+  copy:
+    src: "/home/osboxes/products/tomcat/{{ tomcat_release }}/"
+    dest: "/home/osboxes/instances/{{ tomcat_instance }}/"
+    owner: "{{ tomcat_owner }}"
+    group: "{{ tomcat_group }}"
+    mode: "0755"
+    remote_src: yes
+
+- name: delete log directory 
+  file:
+    path: "/home/osboxes/instances/{{ tomcat_instance}}/logs"
+    state: absent
+    force: yes
+
+- name: Create a log symlinks
+  file:
+    src: "/home/osboxes/logs/{{ tomcat_instance}}"
+    dest: "/home/osboxes/instances/{{ tomcat_instance}}/logs"
+    owner: "{{ tomcat_owner }}"
+    group: "{{ tomcat_group }}"
+    mode: "0755"
+    state: link
+
+- name: deploy setenv.sh.j2 to /home/osboxes/instances/{{ tomcat_instance }}/bin
+  template:
+    src: "setenv.sh.j2"
+    dest: "/home/osboxes/instances/{{ tomcat_instance }}/bin/setenv.sh"
+    owner: "{{ tomcat_owner }}"
+    group: "{{ tomcat_group }}"
+    mode: "0755"
+
+- name: cleanup tomcat downloads
+  file:
+    path:  "/home/osboxes/products/tomcat/{{ tomcat_version }}.tar.gz"
+    state: absent
+    force: yes

@@ -1,0 +1,15 @@
+---
+- name: validate
+  import_tasks: validate.yml
+
+- name: create file system
+  import_tasks: filesystem.yml
+
+- name: install all dependencies
+  import_tasks: install-dependencies.yml
+
+- name: install apache
+  import_tasks: install.yml
+
+- name: create a boot script
+  import_tasks: boot.yml

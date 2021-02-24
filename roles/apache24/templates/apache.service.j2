@@ -1,0 +1,14 @@
+[Unit]
+Description=apache service
+After=network.target
+
+[Service]
+User=osboxes
+Group=osboxes
+Type=oneshot
+ExecStart=/home/osboxes/instances/apache24/{{ apache_instance }}/bin/apachectl start
+ExecStop=/home/osboxes/instances/apache24/{{ apache_instance}}/bin/apachectl stop
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

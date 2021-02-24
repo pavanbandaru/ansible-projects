@@ -1,0 +1,24 @@
+---
+- name: create a directory for apache binaries location
+  file:
+    path: /home/osboxes/products/apache24/
+    owner: "{{ apache_owner }}"
+    group: "{{ apache_group }}"
+    state: directory
+    mode: '0755'
+
+- name: create a directory for apache instance location
+  file:
+    path: "/home/osboxes/instances/apache24/{{ apache_instance }}"
+    owner: "{{ apache_owner }}"
+    group: "{{ apache_group }}"
+    state: directory
+    mode: '0755'
+
+- name: create a directory for apache log location
+  file:
+    path: "/home/osboxes/logs/apache24/{{ apache_instance }}"
+    owner: "{{ apache_owner }}"
+    group: "{{ apache_group }}"
+    state: directory
+    mode: '0755'

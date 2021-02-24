@@ -1,0 +1,24 @@
+---
+- name: deploy tomcat.service.j2 to /etc/systemd/system/tomcat.service 
+  template:
+    src: "tomcat.service.j2"
+    dest: "/etc/systemd/system/tomcat.service"
+  when: (ansible_distribution == "CentOS")
+
+- name: load tomcat service
+  systemd: daemon_reload=yes name=tomcat enabled=yes
+  ignore_errors: yes
+  when: (ansible_distribution == "CentOS")
+
+- name: enable tomcat service
+  service: name=tomcat enabled=yes
+  when: (ansible_distribution == "CentOS")
+
+  #- name: starting the tomcat instance
+  #  systemd: name=tomcat state=started
+  #  become_user: "{{ tomcat_owner }}"
+  #  become_method: sudo
+- name: starting the tomcat instance
+  command: /home/osboxes/instances/{{ tomcat_instance }}/bin/startup.sh
+  become_user: "{{ tomcat_owner }}"
+  become_method: sudo

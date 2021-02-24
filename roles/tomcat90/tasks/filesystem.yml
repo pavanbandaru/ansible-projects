@@ -1,0 +1,40 @@
+---
+- name: create a directory for tomcat jdk location
+  file:
+    path: /home/osboxes/products/jdk/
+    owner: "{{ tomcat_owner }}"
+    group: "{{ tomcat_group }}"
+    state: directory
+    mode: '0755'
+
+- name: create a directory for tomcat product location
+  file:
+    path: /home/osboxes/products/tomcat
+    owner: "{{ tomcat_owner }}"
+    group: "{{ tomcat_group }}"
+    state: directory
+    mode: '0755'
+
+- name: create a directory for tomcat product location
+  file:
+    path: /home/osboxes/products/jdk/
+    owner: "{{ tomcat_owner }}"
+    group: "{{ tomcat_group }}"
+    state: directory
+    mode: '0755'
+
+- name: create a directory for tomcat instance location
+  file:
+    path: "/home/osboxes/instances/{{ tomcat_instance }}"
+    owner: "{{ tomcat_owner }}"
+    group: "{{ tomcat_group }}"
+    state: directory
+    mode: '0755'
+
+- name: create a directory for tomcat log location
+  file:
+    path: "/home/osboxes/logs/{{ tomcat_instance }}"
+    owner: "{{ tomcat_owner }}"
+    group: "{{ tomcat_group }}"
+    state: directory
+    mode: '0755'

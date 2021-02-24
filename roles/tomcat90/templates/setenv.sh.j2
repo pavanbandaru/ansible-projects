@@ -1,0 +1,22 @@
+JAVA_HOME=/home/osboxes/products/jdk/jdk_latest
+JRE_HOME=$JAVA_HOME/jre
+CATALINA_HOME="/home/osboxes/products/tomcat/{{ tomcat_release }}"
+CATALINA_BASE="/home/osboxes/instances/{{ tomcat_instance }}"
+LOG_DIR=$CATALINA_BASE/logs
+
+JAVA_OPTS="${JAVA_OPTS} -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCTimeStamps \
+        -XX:+HeapDumpOnOutOfMemoryError -XX:+UseG1GC -Xloggc:/home/osboxes/logs/{{ tomcat_instance }}/GC.log"
+LD_LIBRARY_PATH=$CATALINA_HOME/lib:$LD_LIBRARY_PATH:
+
+export PATH=$JAVA_HOME/bin/$PATH
+
+##JVM PID File
+CATALINA_PID="/home/osboxes/logs/{{ tomcat_instance }}/jvm.pid"
+
+##JVM Memory Settings
+JAVA_OPTS="$JAVA_OPTS -server -d64 -Xms1024m -Xmx1024m"
+
+JAVA_OPTS="$JAVA_OPTS -Djava.library.path=$CATALINA_HOME/lib"
+
+## umask settings for log permissions
+umask 027

@@ -1,0 +1,14 @@
+---
+apache_owner: osboxes
+apache_group: osboxes
+apache_download_version: httpd-2.4.46.tar.gz
+apr_download_version: apr-1.7.0.tar.gz
+aprutil_download_version: apr-util-1.6.1.tar.gz
+apache_version: httpd-2.4.46
+apache_release: apache24
+apache_instance: poc-apache-instance
+apache_port: 10001
+apache_server_name: webserverhost:10001
+apache_url: https://downloads.apache.org//httpd/httpd-2.4.46.tar.gz
+apr_url: https://downloads.apache.org//apr/apr-1.7.0.tar.gz
+aprutil_url: https://downloads.apache.org//apr/apr-util-1.6.1.tar.gz

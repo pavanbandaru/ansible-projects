@@ -1,0 +1,9 @@
+---
+- name: check if the tomcat instance already present
+  stat:
+    path: "/home/osboxes/instances/{{ tomcat_instance }}"
+  register: check
+
+- fail:
+    msg: "Error: Instance {{ tomcat_instance }} already exists"
+  when: check.stat.exists

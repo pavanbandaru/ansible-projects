@@ -1,0 +1,9 @@
+---
+- name: check if the apache instance already present
+  stat:
+    path: "/home/osboxes/instances/apache24/{{ apache_instance }}"
+  register: check
+
+- fail:
+    msg: "Error: Instance {{ apache_instance }} already exists"
+  when: check.stat.exists

@@ -1,0 +1,164 @@
+---
+- name: Download apache binaries
+  get_url:
+    url: "{{ apache_url }}"
+    dest: /tmp/
+    owner: "{{ apache_owner }}"
+    group: "{{ apache_group }}"
+    mode: "0755"
+
+- name: Download apr binaries
+  get_url:
+    url: "{{ apr_url }}"
+    dest: /tmp/
+    owner: "{{ apache_owner }}"
+    group: "{{ apache_group }}"
+    mode: "0755"
+
+- name: Download apr-util binaries
+  get_url:
+    url: "{{ aprutil_url }}"
+    dest: /tmp/
+    owner: "{{ apache_owner }}"
+    group: "{{ apache_group }}"
+    mode: "0755"
+
+- name: Install httpd package
+  unarchive:
+    src: "/tmp/{{ apache_download_version }}"
+    dest: "/home/osboxes/products/apache24/"
+    owner: "{{ apache_owner }}"
+    group: "{{ apache_group }}"
+    mode: "0755"
+    remote_src: yes
+
+- name: Create a symlinks for apache products
+  file:
+    src: "/home/osboxes/products/apache24/{{ apache_version }}"
+    dest: "/home/osboxes/products/apache24/httpd"
+    owner: "{{ apache_owner }}"
+    group: "{{ apache_group }}"
+    mode: "0755"
+    state: link
+
+- name: Install apr package
+  unarchive:
+    src: "/tmp/{{ apr_download_version }}"
+    dest: "/home/osboxes/products/apache24/"
+    owner: "{{ apache_owner }}"
+    group: "{{ apache_group }}"
+    mode: "0755"
+    remote_src: yes
+
+#- name: Move apr package
+#  file:
+#    command: mv /home/osboxes/products/apache24/apr-1.7.0 /home/osboxes/products/apache24/httpd/srclib/apr
+
+- name: Copy apr package to srclib
+  copy:
+    src: "/home/osboxes/products/apache24/apr-1.7.0/"
+    dest: "/home/osboxes/products/apache24/httpd/srclib/apr"
+    owner: "{{ apache_owner }}"
+    group: "{{ apache_group }}"
+    mode: "0755"
+    remote_src: yes
+
+- name: Install apr-util package
+  unarchive:
+    src: "/tmp/{{ aprutil_download_version }}"
+    dest: "/home/osboxes/products/apache24/"
+    owner: "{{ apache_owner }}"
+    group: "{{ apache_group }}"
+    mode: "0755"
+    remote_src: yes
+
+#- name: Move apr-util package
+#  file:
+#    command: mv /home/osboxes/products/apache24/apr-util-1.6.1  /home/osboxes/products/apache24/httpd/srclib/apr-util
+
+- name: Copy apr-util package to srclib
+  copy:
+    src: "/home/osboxes/products/apache24/apr-util-1.6.1/"
+    dest: "/home/osboxes/products/apache24/httpd/srclib/apr-util"
+    owner: "{{ apache_owner }}"
+    group: "{{ apache_group }}"
+    mode: "0755"
+    remote_src: yes
+
+- name: Create a symlinks for python
+  file:
+    src: "/usr/bin/python3"
+    dest: "/usr/bin/python"
+    state: link
+
+- name: Source code compilation
+  command: sh buildconf
+  args:
+    chdir: /home/osboxes/products/apache24/httpd/
+
+- name: Remove symlink
+  file:
+    path: /usr/bin/python
+    state: absent
+
+- name: Configure Apache and change the desired installation location
+  command: sh configure --enable-ssl --enable-so --with-mpm=event --with-included-apr --prefix=/home/osboxes/instances/apache24/{{ apache_instance }}
+  args:
+    chdir: /home/osboxes/products/apache24/httpd/
+
+- name: Execute the make command to prepare the files for the installation of Apache
+  command: make
+  args:
+    chdir: /home/osboxes/products/apache24/httpd/
+
+- name: Execute make install command to install apache
+  command: make install
+  args:
+    chdir: /home/osboxes/products/apache24/httpd/
+
+- name: delete log directory
+  file:
+    path: "/home/osboxes/instances/apache24/{{ apache_instance}}/logs"
+    state: absent
+    force: yes
+
+- name: Create a log symlinks
+  file:
+    src: "/home/osboxes/logs/apache24/{{ apache_instance}}"
+    dest: "/home/osboxes/instances/apache24/{{ apache_instance}}/logs"
+    owner: "{{ apache_owner }}"
+    group: "{{ apache_group }}"
+    mode: "0755"
+    state: link
+
+- name: deploy httpd.conf.j2 to /home/osboxes/instances/apache24/{{ apache_instance }}/conf/
+  template:
+    src: "httpd.conf.j2"
+    dest: "/home/osboxes/instances/apache24/{{ apache_instance }}/conf/httpd.conf"
+    owner: "{{ apache_owner }}"
+    group: "{{ apache_group }}"
+    mode: "0755"
+
+- name: cleanup apache downloads
+  file:
+    path:  "/tmp/{{ item }}"
+    state: absent
+    force: yes
+  with_items:
+    - "{{ apache_download_version }}"
+    - "{{ apr_download_version }}"
+    - "{{ aprutil_download_version }}"
+
+- name: Change the ownership for apache products directory
+  file:
+    path: "/home/osboxes/products/"
+    owner: "{{ apache_owner }}"
+    group: "{{ apache_group }}"
+    recurse: yes
+
+- name: Change the ownership for apache instances  directory
+  file:
+    path: "/home/osboxes/instances/"
+    owner: "{{ apache_owner }}"
+    group: "{{ apache_group }}"
+    recurse: yes
